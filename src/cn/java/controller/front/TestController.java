@@ -18,7 +18,7 @@ public class TestController {
 
   @RequestMapping(value = "/test_Exception")
   public void exceptionTest(){
-    int i = 10/0;
+    int i = 10 / 0;
     // 测试错误处理
     // 测试通过
   }
