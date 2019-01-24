@@ -15,6 +15,8 @@
   <context:component-scan base-package="cn.java.controller.*,cn.java.service.impl"/>
 
   <!--mvc注解驱动（4.3还要要配吗？）-->
+  <!--听说不配这个会出错，我先配着-->
+  <!--<mvc:annotation-driven/>-->
 
 
   <!--设置静态资源可见性-->
@@ -23,20 +25,60 @@
   <mvc:resources mapping="js/**" location="resources/js"/>
   <mvc:resources mapping="/*.html" location="/html/"/>
 
-  <!--视图解析器-->
-  <!--设置控制方法返回字符串默认前后缀-->
-  <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-    <property name="prefix" value="/pages/"/>
-    <property name="suffix" value=""/>
+
+  <!--这里用到了 ContentNegotiatingViewResolver ，“内容协商视图解析器”，-->
+  <!--其实就是根据返回什么类型的视图，  就协商使用哪种视图解析器。-->
+  <!--如果返回jsp就使用InternalResourceViewResolver视图解析器，-->
+  <!--如果返回JSON格式就使用MappingJackson2JsonView来处理-->
+  <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+
+    <property name="defaultViews">
+      <list>
+        <bean id="jackson2JsonView"
+          class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+          <!--<property name=""-->
+          <!--网上说是renderAttitude属性，好像找不到，先不筛选设置一下-->
+        </bean>
+      </list>
+    </property>
+
+    <property name="viewResolvers">
+      <list>
+        <!--视图解析器-->
+        <!--设置控制方法返回字符串默认前后缀-->
+        <bean id="viewResolver"
+          class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+          <property name="prefix" value="/pages/"/>
+          <property name="suffix" value=""/>
+        </bean>
+      </list>
+    </property>
+
   </bean>
 
+
+  <!--&lt;!&ndash;Bean视图解析器&ndash;&gt;-->
+  <!--&lt;!&ndash;优先级设置成10，这个优先级比较低&ndash;&gt;-->
+  <!--<bean id="beanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver">-->
+  <!--<property name="order" value="10"> </property>-->
+  <!--</bean>-->
+
+  <!--<XMl级JSON视图解析器配置-->
+  <bean id="jackson2JsonView"
+    class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+    <!--<property name=""-->
+    <!--网上说是renderAttitude属性，好像找不到，先不筛选设置一下-->
+  </bean>
+
+
   <!--文件上传-->
-  <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+  <bean id="multipartResolver"
+    class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
     <!--配置默认编码-->
-    <property name="defaultEncoding" value="utf-8"> </property>
+    <property name="defaultEncoding" value="utf-8"></property>
     <!--配置文件上传的大小-->
     <!--这里我先设置1M的大小，以后用到再改！-->
-    <property name="maxUploadSize" value="1048576"> </property>
+    <property name="maxUploadSize" value="1048576"></property>
   </bean>
   <!--数据校验（hibernate-validate）-->
   <!--定时器-->
